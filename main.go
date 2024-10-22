@@ -9,26 +9,35 @@ import (
 
 
 func runConcurrencyWork(
-	workerID int, 
-	currencyChan <- chan currency.Currenncy,
-	resultChan chan <- currency.Currenncy) {
+	workerID int,  // worker id
+	currencyChan <- chan currency.Currenncy, // read from channel
+	resultChan chan <- currency.Currenncy, // write to channel
+	) {
 	
+   // write to channel
    fmt.Printf("worker %d started\n", workerID)
+
+   // read from channel
    for c := range currencyChan {
+	   // fetch rates
 	   rates, err := currency.FetchCurrencyRates(c.Code)
+	   
+	   // write to channel
 	   if err != nil {
 		   fmt.Printf("worker %d error: %v\n", workerID, err)
 	   } else {
-		   c.Rates = rates
-		   resultChan <- c
+		   c.Rates = rates // set rates
+		   resultChan <- c // write to channel
 	   }
 
+	   // write to channel
 	   fmt.Printf("worker %d done\n", workerID)
    }
 }
 
 
 func main(){
+	// create a currency struct
 	ce := &currency.MyCurrency{
 		Currencies: make(map[string]currency.Currenncy),
 	}
@@ -39,23 +48,29 @@ func main(){
 		fmt.Println(err)
 		return
 	}
-
+	
+	// create channels
 	currencyChan := make(chan currency.Currenncy, len(ce.Currencies))
 	resultChan := make(chan currency.Currenncy, len(ce.Currencies))
 
+	// create workers
 	for i := 0; i < len(ce.Currencies); i++ {
 		go runConcurrencyWork(i, currencyChan, resultChan)
 	}
 
+	// send jobs
 	startTime := time.Now()
 
+	// wait for results
 	resultTitme := 0; 
 
+	// send jobs
 	for _, curr := range ce.Currencies {
 		currencyChan <- curr
 		// resultTitme++
 	}
 
+	// wait for results
 	for  {
 		if resultTitme == len(ce.Currencies) {
 				fmt.Println("closing resultChan")
@@ -76,10 +91,12 @@ func main(){
 		}
 	}
 
+	// close(resultChan)
 	endTime := time.Now()
 
 	fmt.Println("======== Results ========")
 
+	// print results
 	for _, curr := range ce.Currencies {
 				fmt.Printf("%s (%s): %d rates\n", curr.Name, curr.Code, len(curr.Rates))
 	}
