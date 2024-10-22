@@ -11,7 +11,7 @@ func (q *Queue) Enqueue(i int) {
 func (q *Queue) Dequeue() int {
 	lastIndex := len(q.Items) - 1
 	toRemove := q.Items[lastIndex]
-	q.Items = q.Items[:lastIndex]
+	q.Items = q.Items[1:]
 	return toRemove
 }
 
