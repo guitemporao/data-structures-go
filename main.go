@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/guitemporao/go-dts/binary_search_tree"
 	"github.com/guitemporao/go-dts/linked_list"
 	"github.com/guitemporao/go-dts/queues"
 	"github.com/guitemporao/go-dts/stacks"
@@ -42,4 +43,12 @@ func main() {
 	newQueue.Enqueue(6)
 	fmt.Println(newQueue.Dequeue()) // 1 -> remove the first index pushed in to the queue
 	fmt.Println(newQueue.Peek())
+
+	// binary search tree
+	newNode := binary_search_tree.Node{Key: 100}
+	newNode.Insert(105)
+	newNode.Insert(45)
+	fmt.Println(newNode)
+	search := newNode.Search(45)
+	fmt.Println(search)
 }

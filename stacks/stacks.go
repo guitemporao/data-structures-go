@@ -1,5 +1,6 @@
 package stacks
 
+// LAST IN FIRST OUT (LIFO)
 type Stack struct {
 	Items []int
 }
